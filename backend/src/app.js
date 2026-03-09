@@ -5,4 +5,8 @@ const app = express();
 app.use(morgan("combined"))
 
 
+app.use(cors({
+    origin: "*"
+}))
+
 export default app;
