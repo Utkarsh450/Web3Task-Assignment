@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar"
 import Home from "../pages/Home"
 import Room from "../pages/Room"
 import NotFound from "../pages/NotFound"
-import Lobby from "../pages/lobby"
+import Lobby from "../pages/Lobby"
 
 function MainRoutes() {
 
