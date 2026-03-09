@@ -61,7 +61,7 @@ const Home = () => {
   }, [code, username, navigate]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-orange-50 font-[satoshi]">
+    <div className="flex flex-col min-h-screen bg-orangtoshi]">
 
       <Navbar roomId={roomId} />
 
@@ -69,7 +69,7 @@ const Home = () => {
 
         <div className="grid md:grid-cols-2 gap-16 items-center w-full max-w-6xl">
 
-          {/* LEFT CONTENT */}
+      
           <div>
 
             <h1 className="text-5xl font-bold text-gray-800 leading-tight">
@@ -81,25 +81,21 @@ const Home = () => {
               When the host plays or pauses the video, everyone stays perfectly synced.
             </p>
 
-            {/* CREATE ROOM BUTTON */}
+             
             <Link
               to={`/lobby/${roomId}`}
               className="inline-block mt-8 bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition"
             >
               Create Watch Room
             </Link>
-
-            {/* DIVIDER */}
             <div className="flex items-center my-6 max-w-md">
               <div className="flex-1 h-px bg-gray-300"></div>
               <span className="px-3 text-gray-400 text-sm">OR</span>
               <div className="flex-1 h-px bg-gray-300"></div>
             </div>
 
-            {/* JOIN CARD */}
+        
             <div className="bg-white shadow-xl rounded-2xl p-6 max-w-md flex flex-col gap-4">
-
-              {/* USERNAME */}
               <div>
                 <input
                   type="text"
@@ -118,7 +114,7 @@ const Home = () => {
                 )}
               </div>
 
-              {/* ROOM CODE */}
+          
               <div>
                 <input
                   type="text"
@@ -137,7 +133,7 @@ const Home = () => {
                 )}
               </div>
 
-              {/* JOIN BUTTON */}
+          
               <button
                 onClick={() => handleJoin()}
                 disabled={loading}
@@ -146,7 +142,7 @@ const Home = () => {
                 {loading ? "Joining..." : "Join Room"}
               </button>
 
-              {/* SERVER ERROR */}
+          
               {serverError && (
                 <p className="text-red-500 text-sm text-center">
                   {serverError}
@@ -157,7 +153,7 @@ const Home = () => {
 
           </div>
 
-          {/* RIGHT IMAGE */}
+      
           <div className="flex justify-center">
             <img
               src="https://cdn-icons-png.flaticon.com/512/3062/3062634.png"

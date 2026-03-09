@@ -11,18 +11,28 @@ export default function Room() {
 
   const [participants, setParticipants] = useState([]);
   const [myRole, setMyRole] = useState("participant");
+  const [messages, setMessages] = useState([]);
+const [chatInput, setChatInput] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [videoId, setVideoId] = useState(null);
 
-  const playerRef = useRef(null);
+  const sendMessage = () => {
 
-  /* ------------------ PLAYER READY ------------------ */
+  if (!chatInput.trim()) return;
+
+  socket.emit("send_message", {
+    roomId,
+    message: chatInput
+  });
+
+  setChatInput("");
+
+};
+  const playerRef = useRef(null);
 
   const handlePlayerReady = (player) => {
     playerRef.current = player;
   };
-
-  /* ------------------ VIDEO CHANGE ------------------ */
 
   const handleChangeVideo = () => {
 
@@ -39,8 +49,6 @@ export default function Room() {
 
   };
 
-  /* ------------------ PLAY ------------------ */
-
   const handlePlay = () => {
 
     const player = playerRef.current;
@@ -55,8 +63,6 @@ export default function Room() {
 
   };
 
-  /* ------------------ PAUSE ------------------ */
-
   const handlePause = () => {
 
     const player = playerRef.current;
@@ -70,8 +76,6 @@ export default function Room() {
     socket.emit("pause", { roomId, time });
 
   };
-
-  /* ------------------ SOCKET EVENTS ------------------ */
 
   useEffect(() => {
 
@@ -135,6 +139,11 @@ export default function Room() {
   toast.error("You were removed from the room");
   window.location.href = "/";
 };
+const handleMessage = (msg) => {
+  setMessages(prev => [...prev, msg]);
+};
+
+socket.on("receive_message", handleMessage);
 
 
 socket.on("kicked", handleKicked);
@@ -154,19 +163,14 @@ socket.on("kicked", handleKicked);
       socket.off("pause", handlePauseEvent);
       socket.off("seek", handleSeekEvent);
       socket.off("kicked", handleKicked);
+        socket.off("receive_message", handleMessage);
 
     };
 
   }, [roomId]);
-
-  /* ------------------ UI ------------------ */
-
   return (
 
     <div className="min-h-screen bg-orange-50 p-6">
-
-      {/* Header */}
-
       <div className="flex justify-between mb-6">
 
         <Link to="/" className="font-semibold text-lg">
@@ -176,14 +180,23 @@ socket.on("kicked", handleKicked);
         <span className="text-gray-600">
           Room ID: {roomId}
         </span>
+         <button
+      onClick={() => {
+        socket.emit("leave_room", { roomId });
+        window.location.href = "/";
+      }}
+      className="bg-red-500 text-white px-3 py-1 rounded"
+    >
+      Leave
+    </button>
 
       </div>
 
-      {/* Layout */}
+     
 
       <div className="grid grid-cols-3 gap-6">
 
-        {/* VIDEO SECTION */}
+      
 
         <div className="col-span-2 bg-white p-4 rounded-xl shadow">
 
@@ -206,7 +219,7 @@ socket.on("kicked", handleKicked);
 
           </div>
 
-          {/* VIDEO INPUT */}
+        
 
           <div className="flex mt-4 gap-3">
 
@@ -227,8 +240,7 @@ socket.on("kicked", handleKicked);
 
           </div>
 
-          {/* CONTROLS */}
-
+        
           <div className="flex gap-4 mt-4">
 
             <button
@@ -250,8 +262,6 @@ socket.on("kicked", handleKicked);
           </div>
 
         </div>
-
-        {/* PARTICIPANTS */}
 
         <div className="bg-white p-4 rounded-xl shadow">
 
@@ -280,8 +290,6 @@ socket.on("kicked", handleKicked);
     {myRole === "host" && p.socketId !== socket.id && (
 
       <div className="flex gap-2">
-
-        {/* Promote button */}
         {p.role === "participant" && (
 
           <button
@@ -298,8 +306,6 @@ socket.on("kicked", handleKicked);
           </button>
 
         )}
-
-        {/* Kick button */}
 
         <button
           onClick={() =>
@@ -324,6 +330,42 @@ socket.on("kicked", handleKicked);
           </ul>
 
         </div>
+        <div className="bg-white p-4 rounded-xl shadow mt-4">
+
+<h2 className="font-semibold mb-2">Chat</h2>
+
+<div className="h-60 overflow-y-auto border p-2 mb-2">
+
+{messages.map((msg, i) => (
+
+<div key={i} className="text-sm">
+
+<b>{msg.username}:</b> {msg.message}
+
+</div>
+
+))}
+
+</div>
+
+<div className="flex gap-2">
+
+<input
+  value={chatInput}
+  onChange={(e) => setChatInput(e.target.value)}
+  className="flex-1 border px-2 py-1 rounded"
+/>
+
+<button
+  onClick={sendMessage}
+  className="bg-blue-500 text-white px-3 py-1 rounded"
+>
+Send
+</button>
+
+</div>
+
+</div>
 
       </div>
 

@@ -38,17 +38,17 @@ const Lobby = () => {
 
       <div className="bg-white w-[420px] rounded-xl shadow-lg p-8">
 
-        {/* Title */}
+
         <h2 className="text-2xl font-semibold text-center text-gray-800">
           Join Watch Party
         </h2>
 
-        {/* Room ID */}
+        
         <p className="text-center text-gray-500 mt-2">
           Room ID: <span className="font-medium">{lobbyId}</span>
         </p>
 
-        {/* Input */}
+
         <input
           type="text"
           placeholder="Enter your name"
@@ -57,7 +57,7 @@ const Lobby = () => {
           onChange={(e)=> setusername(e.target.value)}
         />
 
-        {/* Join button */}
+        
         <button
           onClick={handleJoin}
           className="w-full mt-5 bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 transition"
@@ -65,7 +65,7 @@ const Lobby = () => {
           Join Room
         </button>
 
-        {/* Copy link */}
+        
         <button
           onClick={copyLink}
           className="w-full mt-3 text-orange-500 hover:underline"

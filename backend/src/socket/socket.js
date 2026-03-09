@@ -37,10 +37,7 @@ function setupSocketServer(httpServer) {
 })
 
 socket.on("join_room", ({code, username})=>{
-  console.log("join room is working");
-  
-    // console.log("rooms", rooms);
-  
+  console.log("join room is working");  
   if (!rooms[code]) {
         console.log("room does not exist", rooms);
         
@@ -55,7 +52,7 @@ socket.on("join_room", ({code, username})=>{
     username: username,
     role: "participant"
   }
-    socket.emit("room_joined", { code, username }); // 👈 important
+    socket.emit("room_joined", { code, username });
     socket.to(code).emit("user_joined", username)
   io.to(code).emit(
     "participants_list",
@@ -123,25 +120,50 @@ socket.on("remove_participant", ({ roomId, userId }) => {
 
   if (!room) return;
 
-  // only host can remove
   if (socket.id !== room.host) return;
 
-  // remove user
   delete room.participants[userId];
 
-  // force the user to leave the room
   const userSocket = io.sockets.sockets.get(userId);
 
   if (userSocket) {
     userSocket.leave(roomId);
-    userSocket.emit("kicked"); // notify kicked user
+    userSocket.emit("kicked");
   }
 
-  // update participant list
   io.to(roomId).emit(
     "participants_list",
     Object.values(room.participants)
   );
+
+});
+socket.on("leave_room", ({ roomId }) => {
+
+  if (!rooms[roomId]) return;
+
+  delete rooms[roomId].participants[socket.id];
+
+  socket.leave(roomId);
+
+  io.to(roomId).emit(
+    "participants_list",
+    Object.values(rooms[roomId].participants)
+  );
+
+});
+socket.on("send_message", ({ roomId, message }) => {
+
+  const room = rooms[roomId];
+  if (!room) return;
+
+  const user = room.participants[socket.id];
+  if (!user) return;
+
+  io.to(roomId).emit("receive_message", {
+    username: user.username,
+    message,
+    time: Date.now()
+  });
 
 });
 
